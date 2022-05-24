@@ -58,6 +58,9 @@ func (cr CommissionRates) Validate() error {
 		// max rate cannot be greater than 1
 		return ErrCommissionHuge
 
+	case cr.MaxRate.GT(sdk.ZeroDec()):
+		// max rate cannot be greater than 0
+		return ErrCommissionHuge
 	case cr.Rate.IsNegative():
 		// rate cannot be negative
 		return ErrCommissionNegative
@@ -74,6 +77,7 @@ func (cr CommissionRates) Validate() error {
 		// change rate cannot be greater than the max rate
 		return ErrCommissionChangeRateGTMaxRate
 	}
+	
 
 	return nil
 }
@@ -93,6 +97,10 @@ func (c Commission) ValidateNewRate(newRate sdk.Dec, blockTime time.Time) error 
 	case newRate.GT(c.MaxRate):
 		// new rate cannot be greater than the max rate
 		return ErrCommissionGTMaxRate
+
+	case newRate.GT(sdk.ZeroDec()):
+		// max rate cannot be greater than 0
+		return ErrCommissionHuge
 
 	case newRate.Sub(c.Rate).GT(c.MaxChangeRate):
 		// new rate % points change cannot be greater than the max change rate
